@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>About Page</title>
-</head>
-<body>
-    <p>This is the about page</p>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block content %}
+    <h1>About Page</h1>
+    <div class="container">
+  <!-- Content here -->
+        <p> This website .</p>
+
+        <p> The web will work standalone at the beginning stage, generating the recommendation with random integer. </p>
+
+        <p> It will integrate the recommender system once it has been developed.</p>
+    </div>
+{% endblock content %}

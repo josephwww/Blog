@@ -37,6 +37,7 @@ class Rating(db.Model):
     date_rated = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     film_id = db.Column(db.Integer, db.ForeignKey('movie.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    # TODO demographic data after voting
 
     def __repr__(self):
         return f"Rating('{self.film_id}', '{self.score}')"

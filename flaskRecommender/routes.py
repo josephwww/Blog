@@ -1,7 +1,7 @@
 from flask import render_template, send_from_directory, url_for, flash, redirect, request
 import os
 from flaskRecommender import app, db, bcrypt
-from flaskRecommender.forms import RegistrationForm, LoginForm
+from flaskRecommender.forms import RegistrationForm, LoginForm, RatingForm
 from flaskRecommender.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -22,9 +22,14 @@ posts = [
 
 
 @app.route('/')
-@app.route('/home')
+def index():
+    return redirect(url_for('home'))
+
+
+@app.route('/home', methods=['POST', 'GET'])
 def home():
-    return render_template('home.html')
+    form = RatingForm()
+    return render_template('home.html', form=form)
 
 
 @app.route('/about')

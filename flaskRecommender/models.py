@@ -33,7 +33,7 @@ class Post(db.Model):
 
 class Rating(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    score = db.Column(db.Integer, nullable=False)
+    score = db.Column(db.Boolean, nullable=False)
     date_rated = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     film_id = db.Column(db.Integer, db.ForeignKey('movie.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

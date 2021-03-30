@@ -32,5 +32,7 @@ class LoginForm(FlaskForm):
 class RatingForm(FlaskForm):
     yes = SubmitField('Yes')
     no = SubmitField('No')
+    moderate = SubmitField('Moderate')
+    unknown = SubmitField('I don\'t know this movie')
 
 

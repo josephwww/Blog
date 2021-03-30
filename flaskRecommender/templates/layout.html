@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -11,9 +11,9 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
     {% if title %}
-        <title>Flask Blog - {{ title }}</title>
+        <title>Demography Reconstruction - {{ title }}</title>
     {% else %}
-        <title>Flask Blog</title>
+        <title>Demography Reconstruction</title>
     {% endif %}
 </head>
 <body>
@@ -28,7 +28,10 @@
             <div class="navbar-nav mr-auto">
               <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
               <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
-                <a class="nav-item nav-link" href="{{ url_for('result') }}">Result</a>
+              {% if current_user.is_authenticated %}
+              <a class="nav-item nav-link" href="{{ url_for('vote') }}">Vote</a>
+              <a class="nav-item nav-link" href="{{ url_for('result') }}">Result</a>
+              {% endif %}
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
@@ -60,15 +63,77 @@
         </div>
         <div class="col-md-4">
           <div class="content-section">
-            <h3>Our Sidebar</h3>
-            <p class='text-muted'>You can put any information here you'd like.
+            <h3>Demography result</h3>
+              <p class='text-muted'>Currently we support the predictions of gender, age, and occupation</p>
               <ul class="list-group">
-                <li class="list-group-item list-group-item-light">Latest Posts</li>
-                <li class="list-group-item list-group-item-light">Announcements</li>
-                <li class="list-group-item list-group-item-light">Calendars</li>
-                <li class="list-group-item list-group-item-light">etc</li>
+                {% if current_user.is_authenticated and current_user.ratings.count() > 4%}
+                {% set age_dict = {1:  "Under 18", 18:  "18-24", 25:  "25-34", 35:  "35-44", 45:  "45-49", 50:  "50-55", 56:  "56+"} %}
+                {% set demo = current_user.demographics[-1] %}
+                <li class="list-group-item list-group-item-light">Gender</li>
+                <li class="list-group-item list-group-item-light">
+                    <div class="progress">
+                      <div class="progress-bar bg-success" style="width:{{ demo.male }}%">
+                        Male {{ demo.male }}%
+                      </div>
+                      <div class="progress-bar bg-info" style="width:{{ 100 - demo.male }}%">
+                        Female {{ 100 - demo.male }}%
+                      </div>
+                    </div>
+                </li>
+                <li class="list-group-item list-group-item-light">Age</li>
+                <li class="list-group-item list-group-item-light">
+                    <div class="progress">
+                      <div class="progress-bar bg-success" style="width:{{ demo.age1_p }}%">
+                        <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ age_dict[demo.age1] }} {{ demo.age1_p }}%</strong></span>
+                      </div>
+                    </div>
+                    <div class="progress mt-2">
+                      <div class="progress-bar bg-info" style="width:{{ demo.age2_p }}%">
+                          <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ age_dict[demo.age2] }} {{ demo.age2_p }}%</strong></span>
+                      </div>
+                    </div>
+
+                </li>
+                    {% set occup_dict = {0:  "other",
+                    1:  "academic/educator",
+                    2:  "artist",
+                    3:  "clerical/admin",
+                    4:  "college/grad student",
+                    5:  "customer service",
+                    6:  "doctor/health care",
+                    7:  "executive/managerial",
+                    8:  "farmer",
+                    9:  "homemaker",
+                    10:  "K-12 student",
+                    11:  "lawyer",
+                    12:  "programmer",
+                    13:  "retired",
+                    14:  "sales/marketing",
+                    15:  "scientist",
+                    16:  "self-employed",
+                    17:  "technician/engineer",
+                    18:  "tradesman/craftsman",
+                    19:  "unemployed",
+                    20:  "writer"}  %}
+                <li class="list-group-item list-group-item-light">Occupation</li>
+                <li class="list-group-item list-group-item-light">
+                    <div class="progress">
+                      <div class="progress-bar bg-success" style="width:{{ demo.occup1_p }}%">
+                        <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ occup_dict[demo.occup1] }} {{ demo.occup1_p }}%</strong></span>
+                      </div>
+                    </div>
+                    <div class="progress mt-2">
+                      <div class="progress-bar bg-info" style="width:{{ demo.occup2_p }}%">
+                          <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ occup_dict[demo.occup2] }} {{ demo.occup2_p }}%</strong></span>
+                      </div>
+                    </div>
+
+                </li>
+                  {% else %}
+                    <li class="list-group-item list-group-item-light">Please rate at least 5 movies to get the prediction</li>
+                  {% endif %}
               </ul>
-            </p>
+
           </div>
         </div>
       </div>

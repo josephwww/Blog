@@ -1,24 +1,19 @@
-from flask import render_template, send_from_directory, url_for, flash, redirect, request
 import os
+from recommender.read_movies import get_movie
+from flask import render_template, send_from_directory, url_for, flash, redirect, request, abort
+from flask_login import login_user, current_user, logout_user, login_required
 from flaskRecommender import app, db, bcrypt
 from flaskRecommender.forms import RegistrationForm, LoginForm, RatingForm
-from flaskRecommender.models import User, Post
-from flask_login import login_user, current_user, logout_user, login_required
+from flaskRecommender.models import User, Rating, Demography
 
-posts = [
-    {
-        'author': 'Joseph',
-        'title': 'Demography content',
-        'content': 'Male, Young Age, Student',
-        'date_posted': 'March 20, 2021'
-    },
-    {
-        'author': 'Rafal',
-        'title': 'Demography content',
-        'content': 'Male, Young Age, Engineer',
-        'date_posted': 'March 21, 2021'
-    }
-]
+
+def update_demography(user):
+    # scores = dict()
+    # for rating in user.ratings:
+    #     scores[rating.film_id] = rating.score
+    d = Demography(owner=user, male=30, age1=18, age1_p=60, age2=25, age2_p=30, occup1=1, occup1_p=50, occup2=6, occup2_p=30)
+    db.session.add(user)
+    db.session.commit()
 
 
 @app.route('/')
@@ -26,10 +21,9 @@ def index():
     return redirect(url_for('home'))
 
 
-@app.route('/home', methods=['POST', 'GET'])
+@app.route('/home')
 def home():
-    form = RatingForm()
-    return render_template('home.html', form=form)
+    return render_template('home.html')
 
 
 @app.route('/about')
@@ -37,9 +31,34 @@ def about():
     return render_template('about.html', title='About')
 
 
-@app.route('/result')
+
+@app.route('/vote', methods=['POST', 'GET'])
+@login_required
+def vote():
+    form = RatingForm()
+    ran_movie = get_movie()
+    movie_id = ran_movie['movie_id']
+    if form.validate_on_submit():
+        if form.yes.data:
+            rating = Rating(author=current_user, score=5, film_id=movie_id)
+        elif form.no.data:
+            rating = Rating(author=current_user, score=1, film_id=movie_id)
+        elif form.unknown.data:
+            # rating = Rating(author=current_user, score=0, film_id=movie_id)
+            return render_template('vote.html', form=form, movie_info=ran_movie)
+        else:
+            rating = Rating(author=current_user, score=3, film_id=movie_id)
+        db.session.add(rating)
+        db.session.commit()
+        update_demography(current_user)
+    return render_template('vote.html', form=form, movie_info=ran_movie)
+
+
+@app.route('/result', methods=['POST', 'GET'])
+@login_required
 def result():
-    return render_template('result.html', title='Result', posts=posts)
+    rating = Rating.query.filter_by(user_id=current_user.id)
+    return render_template('result.html', title='Result', ratings=rating)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -92,3 +111,14 @@ def account():
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
+
+@app.route("/rating/<int:rating_id>/delete", methods=['POST'])
+@login_required
+def delete_rating(rating_id):
+    rating = Rating.query.get_or_404(rating_id)
+    if rating.author != current_user:
+        abort(403)
+    db.session.delete(rating)
+    db.session.commit()
+    update_demography(current_user)
+    return redirect(url_for('result'))

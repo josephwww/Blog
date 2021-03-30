@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="">
+            <div class="form-group pull-right">
+                <div class="row">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            {% if 'imdbID' in movie_info %}
+                            <legend class="border-bottom mb-4">Do you like <a target="_blank" rel="noopener noreferrer" href="https://www.imdb.com/title/{{ movie_info['imdbID'] }}/?ref_=fn_al_tt_1">{{ movie_info['movie_name'] + '(' +movie_info['movie_year'] + ')'}}</a>{% for genre in movie_info['movie_genres'] %}
+                                <span class="badge badge-warning">{{ genre }}</span>
+                            {% endfor %}</legend>
+                            {% else %}
+                            <legend class="border-bottom mb-4">Do you like <a target="_blank" rel="noopener noreferrer" href="https://www.google.com/search?q={{ movie_info['movie_name'] + movie_info['movie_year'] }}">{{ movie_info['movie_name'] + '(' + movie_info['movie_year'] + ')'}}</a>{% for genre in movie_info['movie_genres'] %}
+                                <span class="badge badge-warning">{{ genre }}</span>
+                            {% endfor %}</legend>
+                            {% endif %}
+
+                            {{ form.yes(class="btn btn-success") }}
+                            {{ form.no(class="btn btn-danger ml-1") }}
+                            {{ form.moderate(class="btn btn-light ml-1") }}
+                            {{ form.unknown(class="btn btn-secondary ml-1") }}
+
+                    {% if 'Poster' in movie_info %}
+                        <div class="image">
+                            <img src="{{ movie_info['Poster'] }}" class="pull-right mt-2" alt="poster">
+                        </div>
+                    {% endif %}
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

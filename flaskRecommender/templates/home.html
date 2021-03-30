@@ -1,27 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="jumbotron">
-        <h1 class="display-4">Hello, world!</h1>
-        <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+        <h1 class="display-4">Demography Reconstruction</h1>
+        <p class="lead">This is a simple website reconstruct the user demographic information based on the movie ratings.</p>
         <hr class="my-4">
-        <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+        <p>To use this website properly, you need to register first and vote at least five movies to get the demography prediction.</p>
         <p class="lead">
         <a class="btn btn-primary btn-lg" href="{{ url_for('about') }}" role="button">Learn more</a>
         </p>
-    </div>
-    <div class="content-section">
-        <form method="POST" action="">
-            <div class="form-group pull-right">
-                <div class="row">
-                    <form method="POST" action="">
-                        {{ form.hidden_tag() }}
-                        <div class="form-group">
-                            {{ form.yes(class="btn btn-primary btn-success") }}
-                            {{ form.no(class="btn btn-primary btn-danger") }}
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </form>
     </div>
 {% endblock content %}

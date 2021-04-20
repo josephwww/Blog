@@ -9,9 +9,6 @@ from flaskRecommender.models import User, Rating, Demography
 
 
 def update_demography(user):
-    # scores = dict()
-    # for rating in user.ratings:
-    #     scores[rating.film_id] = rating.score
 
     ratings = [(rate.film_id, rate.score) for rate in user.ratings]
     if len(ratings) < 5:

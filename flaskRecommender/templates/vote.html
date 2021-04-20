@@ -21,7 +21,7 @@
                             {{ form.no(class="btn btn-danger ml-1") }}
                             {{ form.moderate(class="btn btn-light ml-1") }}
                             {{ form.unknown(class="btn btn-secondary ml-1") }}
-
+                            {{ form.movieID(class="d-none", value=movie_info['movie_id']) }}
                     {% if 'Poster' in movie_info %}
                         <div class="image">
                             <img src="{{ movie_info['Poster'] }}" class="pull-right mt-2" alt="poster">

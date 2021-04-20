@@ -30,6 +30,7 @@ class LoginForm(FlaskForm):
 
 
 class RatingForm(FlaskForm):
+    movieID = StringField('MovieID')
     yes = SubmitField('Yes')
     no = SubmitField('No')
     moderate = SubmitField('Moderate')

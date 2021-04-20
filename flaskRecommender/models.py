@@ -36,7 +36,7 @@ class Rating(db.Model):
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    ratings = db.relationship('Rating', backref='movie', lazy=True)
+    ratings = db.relationship('Rating', backref='movie', lazy='dynamic')
 
     def __repr__(self):
         return f"Movie('{self.name}')"

@@ -13,8 +13,13 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
+    movie_rated = db.Column(db.Integer, nullable=False, default=0)
+    gender = db.Column(db.String(1), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    occupation = db.Column(db.Integer, nullable=False)
     ratings = db.relationship('Rating', backref='author', lazy='dynamic')
     demographics = db.relationship('Demography', backref='owner', lazy='dynamic')
+
     # ratings = db.relationship('Rating', backref='rates', lazy=True)
 
     def __repr__(self):
@@ -23,14 +28,14 @@ class User(db.Model, UserMixin):
 
 class Rating(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    question_type = db.Column(db.Integer, nullable=False)
     score = db.Column(db.Integer, nullable=False)
     date_rated = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     film_id = db.Column(db.Integer, db.ForeignKey('movie.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    # TODO demographic data after voting
 
     def __repr__(self):
-        return f"Rating('{self.film_id}', '{self.score}')"
+        return f"Rating('{self.question_type}','{self.film_id}', '{self.score}')"
 
 
 class Movie(db.Model):
@@ -44,6 +49,7 @@ class Movie(db.Model):
 
 class Demography(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    question_type = db.Column(db.Integer, nullable=False)
     male = db.Column(db.Integer, nullable=False, default=0)
     age1 = db.Column(db.Integer, nullable=False, default=0)
     age1_p = db.Column(db.Integer, nullable=False, default=0)
@@ -57,5 +63,5 @@ class Demography(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f"Demography('{self.male}', '{self.age1}', '{self.age1_p}', '{self.age2}', '{self.age2_p}'\
-        , '{self.occup1}', '{self.occup1_p}', '{self.occup2}', '{self.occup2_p}') "
+        return f"Demography('{self.question_type}', '{self.male}', '{self.age1}', '{self.age1_p}', '{self.age2}', '{self.age2_p}'," +\
+               f" '{self.occup1}', '{self.occup1_p}', '{self.occup2}', '{self.occup2_p}') "

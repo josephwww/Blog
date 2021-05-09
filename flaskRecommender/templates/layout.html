@@ -29,7 +29,8 @@
               <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
               <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
               {% if current_user.is_authenticated %}
-              <a class="nav-item nav-link" href="{{ url_for('vote') }}">Vote</a>
+              <a class="nav-item nav-link" href="{{ url_for('random_vote') }}">Vote(Random)</a>
+              <a class="nav-item nav-link" href="{{ url_for('entropy_vote') }}">Vote(Entropy)</a>
               <a class="nav-item nav-link" href="{{ url_for('result') }}">Result</a>
               {% endif %}
             </div>
@@ -62,38 +63,10 @@
           {% block content %}{% endblock %}
         </div>
         <div class="col-md-4">
-          <div class="content-section">
-            <h3>Demography result</h3>
-              <p class='text-muted'>Currently we support the predictions of gender, age, and occupation</p>
-              <ul class="list-group">
-                {% if current_user.is_authenticated and current_user.ratings.count() > 4%}
-                {% set age_dict = {1:  "Under 18", 18:  "18-24", 25:  "25-34", 35:  "35-44", 45:  "45-49", 50:  "50-55", 56:  "56+"} %}
-                {% set demo = current_user.demographics[-1] %}
-                <li class="list-group-item list-group-item-light">Gender</li>
-                <li class="list-group-item list-group-item-light">
-                    <div class="progress">
-                      <div class="progress-bar bg-success" style="width:{{ demo.male }}%">
-                        Male {{ demo.male }}%
-                      </div>
-                      <div class="progress-bar bg-info" style="width:{{ 100 - demo.male }}%">
-                        Female {{ 100 - demo.male }}%
-                      </div>
-                    </div>
-                </li>
-                <li class="list-group-item list-group-item-light">Age</li>
-                <li class="list-group-item list-group-item-light">
-                    <div class="progress">
-                      <div class="progress-bar bg-success" style="width:{{ demo.age1_p }}%">
-                        <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ age_dict[demo.age1] }} {{ demo.age1_p }}%</strong></span>
-                      </div>
-                    </div>
-                    <div class="progress mt-2">
-                      <div class="progress-bar bg-info" style="width:{{ demo.age2_p }}%">
-                          <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ age_dict[demo.age2] }} {{ demo.age2_p }}%</strong></span>
-                      </div>
-                    </div>
-
-                </li>
+            {% if current_user.is_authenticated %}
+                    {% set demographics = current_user.demographics.all() %}
+                    {% set demo_dict = {"0":0, "1":0} %}
+                    {% set age_dict = {1:  "Under 18", 18:  "18-24", 25:  "25-34", 35:  "35-44", 45:  "45-49", 50:  "50-55", 56:  "56+"} %}
                     {% set occup_dict = {0:  "other",
                     1:  "academic/educator",
                     2:  "artist",
@@ -115,26 +88,127 @@
                     18:  "tradesman/craftsman",
                     19:  "unemployed",
                     20:  "writer"}  %}
-                <li class="list-group-item list-group-item-light">Occupation</li>
+            {% endif %}
+
+          <div class="content-section">
+            <h3>Demography result with random movies interview</h3>
+              <p class='text-muted'>Currently we support the predictions of gender, age, and occupation</p>
+              <ul class="list-group">
+
+              {% if demographics is defined %}
+                {% for demo in demographics %}
+                    {% if demo.question_type == 0 %}
+                        {% set x=demo_dict.__setitem__("0", demo) %}
+                    {% elif demo.question_type == 1 %}
+                        {% set x=demo_dict.__setitem__("1", demo) %}
+                    {% endif %}
+                {% endfor %}
+              {% endif %}
+              {% if demo_dict is defined and demo_dict["0"]!=0  %}
+                  {% set random = demo_dict["0"] %}
+
+
+                <li class="list-group-item list-group-item-light">Gender</li>
                 <li class="list-group-item list-group-item-light">
                     <div class="progress">
-                      <div class="progress-bar bg-success" style="width:{{ demo.occup1_p }}%">
-                        <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ occup_dict[demo.occup1] }} {{ demo.occup1_p }}%</strong></span>
+                      <div class="progress-bar bg-success" style="width:{{ random.male }}%">
+                        Male {{ random.male }}%
+                      </div>
+                      <div class="progress-bar bg-info" style="width:{{ 100 - random.male }}%">
+                        Female {{ 100 - random.male }}%
+                      </div>
+                    </div>
+                </li>
+                <li class="list-group-item list-group-item-light">Age</li>
+                <li class="list-group-item list-group-item-light">
+                    <div class="progress">
+                      <div class="progress-bar bg-success" style="width:{{ random.age1_p }}%">
+                        <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ age_dict[random.age1] }} {{ random.age1_p }}%</strong></span>
                       </div>
                     </div>
                     <div class="progress mt-2">
-                      <div class="progress-bar bg-info" style="width:{{ demo.occup2_p }}%">
-                          <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ occup_dict[demo.occup2] }} {{ demo.occup2_p }}%</strong></span>
+                      <div class="progress-bar bg-info" style="width:{{ random.age2_p }}%">
+                          <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ age_dict[random.age2] }} {{ random.age2_p }}%</strong></span>
+                      </div>
+                    </div>
+
+                </li>
+
+                <li class="list-group-item list-group-item-light">Occupation</li>
+                <li class="list-group-item list-group-item-light">
+                    <div class="progress">
+                      <div class="progress-bar bg-success" style="width:{{ random.occup1_p }}%">
+                        <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ occup_dict[random.occup1] }} {{ random.occup1_p }}%</strong></span>
+                      </div>
+                    </div>
+                    <div class="progress mt-2">
+                      <div class="progress-bar bg-info" style="width:{{ random.occup2_p }}%">
+                          <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ occup_dict[random.occup2] }} {{ random.occup2_p }}%</strong></span>
                       </div>
                     </div>
 
                 </li>
                   {% else %}
-                    <li class="list-group-item list-group-item-light">Please rate at least 5 movies to get the prediction</li>
+                  <li class="list-group-item list-group-item-light">Please rate at least 5 movies in <a href="{{ url_for('random_vote') }}">random vote</a> to get the prediction</li>
                   {% endif %}
               </ul>
 
           </div>
+
+          <div class="content-section">
+            <h3>Demography result with high entropy movies interview</h3>
+              <ul class="list-group">
+              {% set entropy = [] %}
+
+              {% if demo_dict is defined and demo_dict["1"]!=0 %}
+                  {% set entropy = demo_dict["1"] %}
+                <li class="list-group-item list-group-item-light">Gender</li>
+                <li class="list-group-item list-group-item-light">
+                    <div class="progress">
+                      <div class="progress-bar bg-success" style="width:{{ entropy.male }}%">
+                        Male {{ entropy.male }}%
+                      </div>
+                      <div class="progress-bar bg-info" style="width:{{ 100 - entropy.male }}%">
+                        Female {{ 100 - entropy.male }}%
+                      </div>
+                    </div>
+                </li>
+                <li class="list-group-item list-group-item-light">Age</li>
+                <li class="list-group-item list-group-item-light">
+                    <div class="progress">
+                      <div class="progress-bar bg-success" style="width:{{ entropy.age1_p }}%">
+                        <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ age_dict[entropy.age1] }} {{ entropy.age1_p }}%</strong></span>
+                      </div>
+                    </div>
+                    <div class="progress mt-2">
+                      <div class="progress-bar bg-info" style="width:{{ entropy.age2_p }}%">
+                          <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ age_dict[entropy.age2] }} {{ entropy.age2_p }}%</strong></span>
+                      </div>
+                    </div>
+
+                </li>
+
+                <li class="list-group-item list-group-item-light">Occupation</li>
+                <li class="list-group-item list-group-item-light">
+                    <div class="progress">
+                      <div class="progress-bar bg-success" style="width:{{ entropy.occup1_p }}%">
+                        <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ occup_dict[entropy.occup1] }} {{ entropy.occup1_p }}%</strong></span>
+                      </div>
+                    </div>
+                    <div class="progress mt-2">
+                      <div class="progress-bar bg-info" style="width:{{ entropy.occup2_p }}%">
+                          <span class="text-dark justify-content-center position-absolute w-100"><strong>{{ occup_dict[entropy.occup2] }} {{ entropy.occup2_p }}%</strong></span>
+                      </div>
+                    </div>
+
+                </li>
+                  {% else %}
+                    <li class="list-group-item list-group-item-light">Please rate at least 5 movies in <a href="{{ url_for('entropy_vote') }}">entropy vote</a> to get the prediction</li>
+                  {% endif %}
+              </ul>
+
+          </div>
+
         </div>
       </div>
     </main>

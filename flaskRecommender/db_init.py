@@ -9,6 +9,6 @@ for movie_id, movie_name in get_movies():
     db.session.add(movie)
 
 hashed_password = bcrypt.generate_password_hash('test').decode('utf8')
-test_user = User(username='test', email='test@test.com', password=hashed_password)
+test_user = User(username='test', email='test@test.com', password=hashed_password, gender='M', age=18, occupation=4)
 db.session.add(test_user)
 db.session.commit()

@@ -1,5 +1,5 @@
 import os
-from recommender.read_movies import get_movie
+from recommender.read_movies import get_movie, get_random_movie
 from recommender.rating_space import get_from_rating_space
 from flask import render_template, send_from_directory, url_for, flash, redirect, request, abort
 from flask_login import login_user, current_user, logout_user, login_required
@@ -7,23 +7,32 @@ from flaskRecommender import app, db, bcrypt
 from flaskRecommender.forms import RegistrationForm, LoginForm, RatingForm
 from flaskRecommender.models import User, Rating, Demography
 
-
-def update_demography(user):
-
-    ratings = [(rate.film_id, rate.score) for rate in user.ratings]
-    if len(ratings) < 5:
-        return
-
+def get_demo(ratings, user):
     age1, age2, occu1, occu2, gender1, gender2 = get_from_rating_space(ratings)
     if gender1[0] == 'M':
         male = gender1[1] * 10
     else:
         male = gender2[1] * 10
-    d = Demography(owner=user, male=male, age1=age1[0], age1_p=age1[1] * 10, age2=age2[0], age2_p=age2[1] * 10,
+    return Demography(owner=user, question_type=0, male=male, age1=age1[0], age1_p=age1[1] * 10, age2=age2[0], age2_p=age2[1] * 10,
                    occup1=occu1[0], occup1_p=occu1[1] * 10, occup2=occu2[0], occup2_p=occu2[1] * 10)
+
+
+
+def update_demography(user):
+    random_ratings = [(rate.film_id, rate.score) for rate in user.ratings if rate.question_type == 0]
+    entropy_ratings = [(rate.film_id, rate.score) for rate in user.ratings if rate.question_type == 1]
     for demo in user.demographics:
         db.session.delete(demo)
-    db.session.add(d)
+
+    if len(random_ratings) >= 5:
+        d = get_demo(random_ratings, user)
+        d.question_type = 0
+        db.session.add(d)
+
+    if len(entropy_ratings) >= 5:
+        d = get_demo(entropy_ratings, user)
+        d.question_type = 1
+        db.session.add(d)
     db.session.commit()
 
 
@@ -42,26 +51,50 @@ def about():
     return render_template('about.html', title='About')
 
 
-@app.route('/vote', methods=['POST', 'GET'])
+@app.route('/random_vote', methods=['POST', 'GET'])
 @login_required
-def vote():
+def random_vote():
     form = RatingForm()
-    ran_movie = get_movie()
-    movie_id = ran_movie['movie_id']
+    ran_movie = get_random_movie()
     if form.validate_on_submit():
         if form.yes.data:
-            rating = Rating(author=current_user, score=5, film_id=int(form.movieID.data))
+            rating = Rating(author=current_user, score=5, film_id=int(form.movieID.data), question_type=0)
         elif form.no.data:
-            rating = Rating(author=current_user, score=1, film_id=int(form.movieID.data))
+            rating = Rating(author=current_user, score=1, film_id=int(form.movieID.data), question_type=0)
         elif form.unknown.data:
             # rating = Rating(author=current_user, score=0, film_id=movie_id)
-            return render_template('vote.html', form=form, movie_info=ran_movie)
+            return redirect(url_for('random_vote'))
         else:
-            rating = Rating(author=current_user, score=3, film_id=int(form.movieID.data))
+            rating = Rating(author=current_user, score=3, film_id=int(form.movieID.data), question_type=0)
         db.session.add(rating)
+        ran_movie = get_random_movie()
         db.session.commit()
         update_demography(current_user)
-    return render_template('vote.html', form=form, movie_info=ran_movie)
+    return render_template('vote.html', form=form, movie_info=ran_movie, title='Random Vote')
+
+
+@app.route('/entropy_vote', methods=['POST', 'GET'])
+@login_required
+def entropy_vote():
+    form = RatingForm()
+    ent_movie = get_movie(current_user.movie_rated)
+    if form.validate_on_submit():
+        if form.yes.data:
+            rating = Rating(author=current_user, score=5, film_id=int(form.movieID.data), question_type=1)
+        elif form.no.data:
+            rating = Rating(author=current_user, score=1, film_id=int(form.movieID.data), question_type=1)
+        elif form.unknown.data:
+            current_user.movie_rated += 1
+            db.session.commit()
+            return redirect(url_for('entropy_vote'))
+        else:
+            rating = Rating(author=current_user, score=3, film_id=int(form.movieID.data), question_type=1)
+        db.session.add(rating)
+        current_user.movie_rated += 1
+        ent_movie = get_movie(current_user.movie_rated)
+        db.session.commit()
+        update_demography(current_user)
+    return render_template('vote.html', form=form, movie_info=ent_movie, title='Entropy Vote')
 
 
 @app.route('/result', methods=['POST', 'GET'])
@@ -78,7 +111,7 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password, age=form.age.data, gender=form.gender.data, occupation=form.occupation.data)
         db.session.add(user)
         db.session.commit()
         flash(f"Your account has been created! You are now able to login", 'success')
@@ -133,5 +166,6 @@ def delete_rating(rating_id):
         abort(403)
     db.session.delete(rating)
     db.session.commit()
+    flash('Vote has been deleted', 'success')
     update_demography(current_user)
     return redirect(url_for('result'))

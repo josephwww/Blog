@@ -88,7 +88,7 @@ class Tree:
 		
 		# return the user vecotr associated with the lead node
 		print("zzz", current_node.user_vector.shape)
-		return np.mean(current_node.user_vector, axis = 0)
+		return np.mean(current_node.user_vector, axis=0)
 
 	# Returns the user vector for the decision tree
 	def getUserVectors(self, rating_matrix, K):

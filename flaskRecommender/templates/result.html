@@ -5,7 +5,7 @@
         <article class="media content-section">
           <div class="media-body">
             <div class="article-metadata">
-              <p class="mr-2" href="#">Go to <a href="{{ url_for('vote') }}">VOTE</a></p>
+              <p class="mr-2" href="#">Go to <a href="{{ url_for('random_vote') }}">RANDOM VOTE</a> or <a href="{{ url_for('entropy_vote') }}">ENTROPY VOTE</a></p>
             </div>
             <h2><a class="article-title" href="#"></a></h2>
           </div>
@@ -16,6 +16,11 @@
           <div class="media-body">
             <div class="article-metadata">
               <a class="mr-2" href="#">{{ rating.movie.name  }}</a>
+                {% if rating.question_type == 0 %}
+              <span class="badge badge-warning">random</span>
+                {% elif rating.question_type == 1 %}
+              <span class="badge badge-info">entropy</span>
+                {% endif %}
               <small class="text-muted">{{ rating.date_rated.strftime('%Y-%m-%d %H:%M:%S') }}</small>
                 <form class="float-right" action="{{ url_for('delete_rating', rating_id=rating.id) }}" method="POST">
                     <button type="submit" class="btn btn-danger btn-sm float-right" >Delete</button>

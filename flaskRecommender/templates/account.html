@@ -1,5 +1,35 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>{{ current_user.username }}</h1>
+    {% if current_user.gender=='F' %}
+    <p>Your Gender is <b class="text-danger">Female</b></p>
+    {% else %}
+    <p>Your GENDER is <b class="text-info">Male</b></p><br>
+    {% endif %}
+    {% set age_dict = {1:  "Under 18", 18:  "18-24", 25:  "25-34", 35:  "35-44", 45:  "45-49", 50:  "50-55", 56:  "56+"} %}
+    <p>Your AGE is <b class="text-info">{{ age_dict[current_user.age] }}</b></p><br>
+    {% set occup_dict = {0:  "other",
+                    1:  "academic/educator",
+                    2:  "artist",
+                    3:  "clerical/admin",
+                    4:  "college/grad student",
+                    5:  "customer service",
+                    6:  "doctor/health care",
+                    7:  "executive/managerial",
+                    8:  "farmer",
+                    9:  "homemaker",
+                    10:  "K-12 student",
+                    11:  "lawyer",
+                    12:  "programmer",
+                    13:  "retired",
+                    14:  "sales/marketing",
+                    15:  "scientist",
+                    16:  "self-employed",
+                    17:  "technician/engineer",
+                    18:  "tradesman/craftsman",
+                    19:  "unemployed",
+                    20:  "writer"}  %}
+    <p>Your OCCUPATION is <b class="text-info">{{ occup_dict[current_user.occupation] }}</b></p><br>
+
 
 {% endblock content %}

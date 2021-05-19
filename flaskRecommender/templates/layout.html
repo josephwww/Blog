@@ -37,6 +37,9 @@
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if current_user.is_authenticated %}
+                  {% if current_user.username == 'test' %}
+                      <a class="nav-item nav-link" href="{{ url_for('admin') }}">Admin</a>
+                  {% endif %}
               <a class="nav-item nav-link" href="{{ url_for('account') }}">Account</a>
               <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
               {% else %}
@@ -66,7 +69,7 @@
             {% if current_user.is_authenticated %}
                     {% set demographics = current_user.demographics.all() %}
                     {% set demo_dict = {"0":0, "1":0} %}
-                    {% set age_dict = {1:  "Under 18", 18:  "18-24", 25:  "25-34", 35:  "35-44", 45:  "45-49", 50:  "50-55", 56:  "56+"} %}
+                    {% set age_dict = {1:  "Under 18", 18:  "18-24", 25:  "25-34", 35:  "35-44", 45:  "45-49", 50:  "50-55", 56:  "56+", -1:"N/A"} %}
                     {% set occup_dict = {0:  "other",
                     1:  "academic/educator",
                     2:  "artist",
@@ -87,7 +90,8 @@
                     17:  "technician/engineer",
                     18:  "tradesman/craftsman",
                     19:  "unemployed",
-                    20:  "writer"}  %}
+                    20:  "writer",
+                    -1:  "N/A"}  %}
             {% endif %}
 
           <div class="content-section">

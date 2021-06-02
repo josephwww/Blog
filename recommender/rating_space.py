@@ -6,10 +6,17 @@ from sklearn.linear_model import LogisticRegression
 import pickle
 
 def generate_rating_space(new_user):
+    '''
+    for given new user ratings, it generate the rating vector in Pandas Series
+
+    :param new_user: List of two elements tuples. tuple includes movie index and score.
+    :return: the rating vector for given user
+    '''
     handle = open(os.path.join(os.path.join(os.path.dirname(__file__)), 'ml-1m', 'movie_to_index.pkl'), 'rb')
     movie_to_index = pickle.load(handle)
     handle.close()
 
+    # initial the rating vetor
     new_user_rating = [0.0] * 3706
 
     for movie_id, rating in new_user:
@@ -24,6 +31,7 @@ def get_from_rating_space(new_user):
     '''
     from given rating space, use the cosine similarity to find the similar user
     return the top K users demographic
+    :param new_user: the new user
     '''
     K = 100
     #rating_matrix = pd.read_pickle(os.path.join(os.path.join(os.path.dirname(__file__)), 'ml-1m', 'rating_matrix.pkl'))

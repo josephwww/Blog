@@ -1,6 +1,8 @@
 import pickle
 import pandas as pd
 
+
+# generate the raing
 uname = ['user_id', 'gender', 'age', 'occupation', 'zip']
 users = pd.read_table(r'users.dat', sep='::', header=None, names=uname, engine='python')
 users.to_pickle('users.pkl')

@@ -14,7 +14,7 @@ y = users.gender.to_numpy()
 
 models=[]
 scores=[]
-for train_ids, test_ids in ShuffleSplit(n_splits=50, test_size=0.2, random_state=20210511).split(X):
+for train_ids, test_ids in ShuffleSplit(n_splits=1, test_size=0.2, random_state=20210511).split(X):
     x_train, x_test = X[train_ids], X[test_ids]
     y_train, y_test = y[train_ids], y[test_ids]
     model = LogisticRegression(solver='liblinear', C=0.05)
@@ -25,13 +25,13 @@ for train_ids, test_ids in ShuffleSplit(n_splits=50, test_size=0.2, random_state
 best_gender_model = models[max(enumerate(scores), key=lambda x:x[1])[0]]
 print(max(enumerate(scores), key=lambda x:x[1]))
 filename = 'LR_gender.pkl'
-pickle.dump(best_gender_model, open(filename, 'wb'))
+#pickle.dump(best_gender_model, open(filename, 'wb'))
 
 
 y = users.age.to_numpy()
 models=[]
 scores=[]
-for train_ids, test_ids in ShuffleSplit(n_splits=50, test_size=0.2, random_state=20210511).split(X):
+for train_ids, test_ids in ShuffleSplit(n_splits=1, test_size=0.2, random_state=20210511).split(X):
     x_train, x_test = X[train_ids], X[test_ids]
     y_train, y_test = y[train_ids], y[test_ids]
     model = LogisticRegression(multi_class='multinomial', solver='lbfgs', C=0.05, max_iter=4000)
@@ -40,13 +40,14 @@ for train_ids, test_ids in ShuffleSplit(n_splits=50, test_size=0.2, random_state
     scores.append(model.score(x_test, y_test))
 
 best_age_model = models[max(enumerate(scores), key=lambda x:x[1])[0]]
+print(max(enumerate(scores), key=lambda x:x[1]))
 filename = 'LR_age.pkl'
-pickle.dump(best_age_model, open(filename, 'wb'))
+#pickle.dump(best_age_model, open(filename, 'wb'))
 
 y = users.occupation.to_numpy()
 models=[]
 scores=[]
-for train_ids, test_ids in ShuffleSplit(n_splits=50, test_size=0.2, random_state=20210511).split(X):
+for train_ids, test_ids in ShuffleSplit(n_splits=1, test_size=0.2, random_state=20210511).split(X):
     x_train, x_test = X[train_ids], X[test_ids]
     y_train, y_test = y[train_ids], y[test_ids]
     model = LogisticRegression(multi_class='multinomial', solver='lbfgs', C=0.05, max_iter=4000)
@@ -55,5 +56,6 @@ for train_ids, test_ids in ShuffleSplit(n_splits=50, test_size=0.2, random_state
     scores.append(model.score(x_test, y_test))
 
 best_occupation_model = models[max(enumerate(scores), key=lambda x:x[1])[0]]
+print(max(enumerate(scores), key=lambda x:x[1]))
 filename = 'LR_occupation.pkl'
-pickle.dump(best_occupation_model, open(filename, 'wb'))
+#pickle.dump(best_occupation_model, open(filename, 'wb'))

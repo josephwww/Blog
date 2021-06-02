@@ -2,7 +2,7 @@ import pickle
 import pandas as pd
 
 
-# generate the raing
+# generate the movie_id to index in the rating matrix
 uname = ['user_id', 'gender', 'age', 'occupation', 'zip']
 users = pd.read_table(r'users.dat', sep='::', header=None, names=uname, engine='python')
 users.to_pickle('users.pkl')

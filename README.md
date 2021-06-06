@@ -5,7 +5,7 @@ Privacy Issue in Recommendation System by Joseph Wang
 - The recommender is located in the recommender package
 - The [web demo](http://139.9.113.206:8888) is available
 
-## installation
+## Installation
 - You may need to install PyTorch first. The guide line can be found [here](https://pytorch.org/get-started/locally/)
 - The software runs under python 3.6.2. The required modules are listed in [requirements.txt](https://github.com/josephwww/MovieReviewRecommenderApp/blob/main/requirements.txt). All the codes have been tested under Windows Conda Environment.
 ```pip install -r requirements.txt```

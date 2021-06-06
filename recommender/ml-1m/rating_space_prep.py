@@ -14,3 +14,4 @@ movie_to_index = {v: k for k, v in enumerate(rating_matrix.columns)}
 # Store data (serialize)
 with open('movie_to_index.pkl', 'wb') as handle:
     pickle.dump(movie_to_index, handle, protocol=pickle.HIGHEST_PROTOCOL)
+rating_matrix.to_pickle('rating_matrix.pkl')

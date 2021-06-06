@@ -1,8 +1,10 @@
+# get the logistic regression model and plot the result
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import ShuffleSplit
 import pandas as pd
 import os
-import pickle
+
+
 
 rating_matrix = pd.read_pickle(os.path.join('..', 'ml-1m', 'rating_matrix.pkl')).astype(int)
 users = pd.read_pickle(os.path.join('..', 'ml-1m', 'users.pkl'))

@@ -1,3 +1,4 @@
+# define the database
 from datetime import datetime
 from flaskRecommender import db, login_manager
 from flask_login import UserMixin
@@ -19,8 +20,6 @@ class User(db.Model, UserMixin):
     occupation = db.Column(db.Integer, nullable=False)
     ratings = db.relationship('Rating', backref='author', lazy='dynamic')
     demographics = db.relationship('Demography', backref='owner', lazy='dynamic')
-
-    # ratings = db.relationship('Rating', backref='rates', lazy=True)
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"

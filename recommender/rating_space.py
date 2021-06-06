@@ -1,8 +1,8 @@
-import os
+# get the demographic prediction for web app
 
+import os
 import pandas as pd
 from scipy.spatial.distance import cosine
-from sklearn.linear_model import LogisticRegression
 import pickle
 
 def generate_rating_space(new_user):
@@ -16,7 +16,7 @@ def generate_rating_space(new_user):
     movie_to_index = pickle.load(handle)
     handle.close()
 
-    # initial the rating vetor
+    # initial the rating vector
     new_user_rating = [0.0] * 3706
 
     for movie_id, rating in new_user:

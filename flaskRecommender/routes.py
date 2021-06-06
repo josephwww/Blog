@@ -7,7 +7,12 @@ from flaskRecommender import app, db, bcrypt
 from flaskRecommender.forms import RegistrationForm, LoginForm, RatingForm
 from flaskRecommender.models import User, Rating, Demography
 
+
 def get_demo(ratings, user):
+    '''
+    get demographic information with given rating and user
+    :return the Demographic Data object
+    '''
     age1, age2, occu1, occu2, gender1, gender2 = get_from_rating_space(ratings)
     if gender1[0] == 'M':
         male = gender1[1]
@@ -16,7 +21,13 @@ def get_demo(ratings, user):
     return Demography(owner=user, question_type=0, male=male, age1=age1[0], age1_p=age1[1] , age2=age2[0], age2_p=age2[1] ,
                    occup1=occu1[0], occup1_p=occu1[1] , occup2=occu2[0], occup2_p=occu2[1] )
 
+
 def get_LR_demo(ratings, user):
+    '''
+    get demographic information with given rating and user using Logistic Regression
+    :return the Demographic Data object
+
+    '''
     age1, age2, occu1, occu2, gender1, gender2 = get_from_LR(ratings)
     if gender1[0] == 'M':
         male = gender1[1]
@@ -28,6 +39,11 @@ def get_LR_demo(ratings, user):
 
 
 def update_demography(user):
+    '''
+    update current user's demographic
+    :return None
+
+    '''
     random_ratings = [(rate.film_id, rate.score) for rate in user.ratings if rate.question_type == 0]
     entropy_ratings = [(rate.film_id, rate.score) for rate in user.ratings if rate.question_type == 1]
     for demo in user.demographics:
@@ -75,7 +91,6 @@ def random_vote():
             if current_user.ratings.count() == 10:
                 flash('You have voted enough movies, please switch to Vote(Entropy) if you have not done so.')
         elif form.unknown.data:
-            # rating = Rating(author=current_user, score=0, film_id=movie_id)
             return redirect(url_for('random_vote'))
         else:
             rating = Rating(author=current_user, score=3, film_id=int(form.movieID.data), question_type=0)

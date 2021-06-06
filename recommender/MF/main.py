@@ -1,3 +1,4 @@
+# user embedding comparison in matrix factorization
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -119,9 +120,6 @@ train_mf(model, epochs=10, lr=0.1)
 
 user_embed = model.user_emb(torch.LongTensor([i for i in range(num_users)]))
 user_embed = list(map(lambda x: x.detach().numpy(), user_embed))
-
-
-
 
 gender_accu = 0
 age_accu = 0

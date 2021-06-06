@@ -1,3 +1,4 @@
+# choose movie from database
 import pandas as pd
 import requests
 import os
@@ -12,6 +13,7 @@ def get_movie_details(movie_name):
     movie_info['movie_year'] = movie_name[-5:-1]
     name = movie_name[:-6]
     year = movie_name[-5:-1]
+    # use omdbapi to get the movie detail
     url = 'http://www.omdbapi.com/?i=tt3896198&apikey=c9afa68e&t={}&y={}'.format(name,year)
     movie_data = requests.get(url=url).json()
     if 'Poster' in movie_data:
@@ -22,6 +24,10 @@ def get_movie_details(movie_name):
 
 
 def replace_the(movie):
+    """
+    fix the typo in the movielens data
+    :return fixed movie name
+    """
     if ', The' in movie:
         movie = movie.replace(', The', '')
         movie = 'The ' + movie
@@ -29,6 +35,7 @@ def replace_the(movie):
 
 
 def get_movie(index):
+
     indexs = [2858,  260, 1196, 1210,  480, 2028,  589, 2571, 1270,  593, 1580,
             1198,  608, 2762,  110, 2396, 1197,  527, 1617, 1265, 1097, 2628,
             2997,  318,  858,  356, 2716,  296, 1240,    1, 1214,  457, 2916,

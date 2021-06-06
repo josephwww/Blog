@@ -3,3 +3,4 @@ V2venv/
 
 .idea/
 /venvv/
+recommender/ml-1m/rating_matrix.pkl
